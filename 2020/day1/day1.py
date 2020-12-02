@@ -1,23 +1,17 @@
 import time
 from itertools import combinations
 
+SUM = 2020
+
 def get_data(filepath):
     with open(filepath) as f:
-        return [int(line) for line in f]
-
-'''
-def part1(values):
-    for v1 in values:
-        for v2 in values:
-            if v1+v2 == 2020:
-                return v1*v2
-'''
+        return {int(line) for line in f}
 
 def part1(values):
-    pairs = combinations(values, 2)
-    for pair in pairs:
-        if sum(pair) == 2020:
-            return pair[0]*pair[1]
+    for value in values:
+        diff = SUM - value
+        if diff in values:
+            return value * diff
 
 assert part1(get_data('test')) == 514579
 start_time = time.time()
@@ -25,10 +19,11 @@ print('Part 1: %s' % part1(get_data('input')))
 print('Solved in %s seconds' % (time.time() - start_time))
 
 def part2(values):
-    pairs = combinations(values, 3)
-    for pair in pairs:
-        if sum(pair) == 2020:
-            return pair[0]*pair[1]*pair[2]
+    for value1 in values:
+        for value2 in values:
+            diff = SUM - (value1 + value2)
+            if diff in values:
+                return diff * value1 * value2
 
 assert part2(get_data('test')) == 241861950
 start_time = time.time()
