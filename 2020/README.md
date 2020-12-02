@@ -3,7 +3,7 @@ This repository is for keeping track of my solutions to Advent of Code 2020.
 
 ## Solutions
  - [x] [Day 1](day1/day1.py) :star: :star:
- - [ ] [Day 2](day2/day2.py) :star: 
+ - [x] [Day 2](day2/day2.py) :star: :star:
  - [ ] Day 3 
  - [ ] Day 4
  - [ ] Day 5
