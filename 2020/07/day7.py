@@ -19,6 +19,13 @@ def parse_rule(rule):
     return container_bag, bags_contained
 
 
+def parse_bag_rules(inputs):
+    bag_rules = {}
+    for line in inputs:
+        container_bag, bags_contained = parse_rule(line)
+        bag_rules[container_bag] = bags_contained
+    return bag_rules
+
 def bag_contains_target(bag_rules, bag_to_search, target_bag):
     if bag_rules[bag_to_search]:
         for bag in bag_rules[bag_to_search]:
@@ -32,10 +39,7 @@ def bag_contains_target(bag_rules, bag_to_search, target_bag):
 
 
 def solve(inputs):
-    bag_rules = {}
-    for line in inputs:
-        container_bag, bags_contained = parse_rule(line)
-        bag_rules[container_bag] = bags_contained
+    bag_rules = parse_bag_rules(inputs)
     good_bags = []
     for bag in bag_rules.keys():
         if bag_contains_target(bag_rules, bag, TARGET_BAG):
@@ -43,5 +47,22 @@ def solve(inputs):
     return len(good_bags)
 
 
+def search_bags(bag_rules, bag_to_search, num_bags):
+    num_bags_total = num_bags
+    for bag in bag_rules[bag_to_search]:
+        num_bags_inside = bag_rules[bag_to_search][bag]
+        num_bags_total += num_bags * search_bags(bag_rules, bag, num_bags_inside)
+    return num_bags_total
+
+
+def solve2(inputs):
+    bag_rules = parse_bag_rules(inputs)
+    return search_bags(bag_rules, TARGET_BAG, 1) - 1  # Bag count does not include target bag
+
+
 assert solve(get_data('test')) == 4
 print('Part 1: %d' % solve(get_data('input')))
+
+assert solve2(get_data('test')) == 32
+assert solve2(get_data('test2')) == 126
+print('Part 2: %d' % solve2(get_data('input')))
