@@ -1,8 +1,11 @@
+import time
+
 ACC = 'acc' # acc increases or decreases a single global value called the accumulator by the value given in the argument
 JUMP = 'jmp' # jmp jumps to a new instruction relative to itself, the next instruction to execute is found using the argument as an offset from the jmp instruction
 NO_OPERATION = 'nop' # operation immediately below is executed next
 POS = '+'
 NEG = '-'
+HISTORY = 'his'
 
 
 def get_data(filepath):
@@ -10,22 +13,24 @@ def get_data(filepath):
 
 
 class InfiniteLoopException(Exception):
-    pass
+    def __init__(self, *args):
+        self.accumulator = args[0][ACC]
+        self.history = args[0][HISTORY]
 
 
 def compute(instructions):
     accumulator = 0
-    i = 0
+    pointer = 0
     instructions_run = set()
     running = True
     while running:
-        if i == len(instructions):
+        if pointer == len(instructions):
             return accumulator
-        if i in instructions_run:
-            raise InfiniteLoopException({ACC: accumulator})
+        if pointer in instructions_run:
+            raise InfiniteLoopException({ACC: accumulator, HISTORY: instructions_run})
         else:
-            instructions_run.add(i)
-        operation, argument = instructions[i].split(' ')
+            instructions_run.add(pointer)
+        operation, argument = instructions[pointer].split(' ')
         sign = argument[0]
         value = int(argument[1:])
         if operation == NO_OPERATION:
@@ -33,9 +38,9 @@ def compute(instructions):
         elif operation == ACC:
             accumulator = accumulator+value if sign == POS else accumulator-value
         elif operation == JUMP:
-            i = i+value if sign == POS else i-value
+            pointer = pointer+value if sign == POS else pointer-value
             continue
-        i += 1
+        pointer += 1
 
 
 def solve1(filepath):
@@ -43,34 +48,37 @@ def solve1(filepath):
     try:
         compute(instructions)
     except InfiniteLoopException as e:
-        return e.args[0][ACC]
+        return e.accumulator
 
 
-def solve2(filepath, instructions_changed=None):
-    if not instructions_changed:
-        instructions_changed = set()
+def solve2(filepath):
     first_instructions = get_data(filepath)
-    debugging = True
     new_instructions = first_instructions[:]
+    instructions_changed = set()
+    debugging = True
     while debugging:
         try:
             return compute(new_instructions)
         except InfiniteLoopException as e:
             new_instructions = first_instructions[:]
-            for i2, instruction in enumerate(first_instructions):
-                if i2 not in instructions_changed:
+            for index, instruction in enumerate(first_instructions):
+                if index in e.history and index not in instructions_changed:
                     if JUMP in instruction:
-                        new_instructions[i2] = instruction.replace(JUMP, NO_OPERATION)
-                        instructions_changed.add(i2)
+                        new_instructions[index] = instruction.replace(JUMP, NO_OPERATION)
+                        instructions_changed.add(index)
                         break
                     elif NO_OPERATION in instruction:
-                        new_instructions[i2] = instruction.replace(NO_OPERATION, JUMP)
-                        instructions_changed.add(i2)
+                        new_instructions[index] = instruction.replace(NO_OPERATION, JUMP)
+                        instructions_changed.add(index)
                         break
 
 
 assert solve1('test') == 5
+start_time = time.time()
 print('Part 1: %d' % solve1('input'))
+print('Solved in %s seconds' % (time.time() - start_time))
 
 assert solve2('test') == 8
+start_time = time.time()
 print('Part 1: %d' % solve2('input'))
+print('Solved in %s seconds' % (time.time() - start_time))
