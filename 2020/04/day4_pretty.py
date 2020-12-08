@@ -8,7 +8,7 @@ ANSI_NC = '\033[0m'
 def display_passport(passport):
     display_string = ''
     for field in passport:
-        display_string += '%s%s: %s%s\n' % (ANSI_RED if not passport[field][0] and field in REQUIRED_FIELDS else ANSI_GREEN, field, passport[field][1], ANSI_NC)
+        display_string += '%s: %s%s%s\n' % (field, ANSI_RED if not passport[field][0] and field in REQUIRED_FIELDS else ANSI_GREEN, passport[field][1], ANSI_NC)
     return display_string
 
 
