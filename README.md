@@ -1,1 +1,5 @@
-Advent of code 2020 attempts...
+# Advent of Code
+
+***[Advent of Code is an Advent calendar of small programming puzzles for a variety of skill sets and skill levels that can be solved in any programming language you like. People use them as a speed contest, interview prep, company training, university coursework, practice problems, or to challenge each other.](https://adventofcode.com/2020/about)***
+
+This repository is being used to hold my solutions/attempts for current and past AoC puzzles, as well as general experimentation with the puzzles. Solution data has been removed [per request](https://www.reddit.com/r/adventofcode/comments/e7khy8/are_everyones_input_data_and_by_extension/fa13hb9/), most of my scripts include a test file and assume solution data is included in the folder in a a file called `input`. So far, all of my solutions have been done in python and are set up to be run locally in the file folder, for example `python day1.py` in 2020/01/, to directly return solutions to parts 1 and 2 of that day's task. 
