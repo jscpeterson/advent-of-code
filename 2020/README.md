@@ -11,7 +11,7 @@ This repository is for keeping track of my solutions to Advent of Code 2020.
  - [x] [Day 7](https://adventofcode.com/2020/day/7) :star: :star:
  - [x] [Day 8](https://adventofcode.com/2020/day/8) :star: :star:
  - [x] [Day 9](https://adventofcode.com/2020/day/9) :star: :star:
- - [ ] [Day 10](https://adventofcode.com/2020/day/10) :star:
+ - [x] [Day 10](https://adventofcode.com/2020/day/10) :star: :star:
  - [x] [Day 11](https://adventofcode.com/2020/day/11) :star: :star:
  - [x] [Day 12](https://adventofcode.com/2020/day/12) :star: :star:
  - [ ] [Day 13](https://adventofcode.com/2020/day/13)
