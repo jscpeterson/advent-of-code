@@ -7,20 +7,33 @@ ANSI_GOLD = '\033[1;33m'
 ANSI_NC = '\033[0;m'    
 DIGITS = '0123456789'
 OPERATORS = '*+'
+OPERATOR_PRIORITIES = {'(': lambda tokens, pointer: calculate_gold(tokens=tokens[int(pointer)+1:]),
+                       '*': lambda tokens, pointer: tokens[int(pointer)-1] * tokens[int(pointer)+1],
+                       '+': lambda tokens, pointer: tokens[int(pointer)-1] + tokens[int(pointer)+1]}
+SILVER_TESTS = {'1+(2*3)+(4*(5+6))': 51,
+                '2*3+(4*5)': 26,
+                '5+(8*3+9+3*4*3)': 437,
+                '5*9*(7*3*3+9*3+(8+6*4))': 12240,
+                '((2+4*9)*(6+9*8+6)+6)+2+4*2': 13632}
+GOLD_TESTS = {'1+(2 * 3)+(4*(5+6))': 51,
+              '2*3+(4*5)': 46,
+              '5+(8*3+9+3*4*3)': 1445,
+              '5*9*(7*3*3+9*3+(8+6*4))': 669060,
+              '((2+4*9)*(6+9*8+6)+6)+2+4*2': 23340}
 
 def get_data(filepath):
     return [line.strip().replace(' ','') for line in open(filepath).readlines()]
 
-def silver(filepath):
+def solve(calculation_method, filepath):
     expressions = get_data(filepath)
-    return sum(calculate(expression) for expression in expressions)
+    return sum(calculation_method(expression) for expression in expressions)
 
-def calculate(expression=None, tokens=None):
-    if not tokens:
+def calculate_gold(expression=None, tokens=None):
+    if expression and not tokens:
         tokens = [token for token in expression]
     operands = list()
     operators = list()
-    result = 0
+    priority_level = 0
     while tokens:
         token = tokens.pop(0)
         if token in DIGITS:
@@ -28,9 +41,10 @@ def calculate(expression=None, tokens=None):
         elif token in OPERATORS:
             operators.append(token)
         elif token in '(':
-            operands.append(calculate(tokens=tokens))
+            operands.append(calculate_gold(tokens=tokens))
         elif token in ')':
             break
+        priority_level += 1
     while operators:
         operand1 = operands.pop(0)
         operator = operators.pop(0)
@@ -41,19 +55,44 @@ def calculate(expression=None, tokens=None):
             operands.insert(0, operand1*operand2)
     return operands[0]
 
-def test_calculate():
-    return calculate('2*3+(4*5)') == 26 and \
-    calculate('5+(8*3+9+3*4*3)') == 437 and \
-    calculate('5*9*(7*3*3+9*3+(8+6*4))') == 12240 and \
-    calculate('((2+4*9)*(6+9*8+6)+6)+2+4*2') == 13632
+def calculate_silver(expression=None, tokens=None):
+    if expression and not tokens:
+        tokens = [token for token in expression]
+    operands = list()
+    operators = list()
+    priority_level = 0
+    while tokens:
+        token = tokens.pop(0)
+        if token in DIGITS:
+            operands.append(int(token))
+        elif token in OPERATORS:
+            operators.append(token)
+        elif token in '(':
+            operands.append(calculate_gold(tokens=tokens))
+        elif token in ')':
+            break
+        priority_level += 1
+    while operators:
+        operand1 = operands.pop(0)
+        operator = operators.pop(0)
+        operand2 = operands.pop(0)
+        if operator == '+':
+            operands.insert(0, operand1+operand2)
+        elif operator == '*':
+            operands.insert(0, operand1*operand2)
+    return operands[0]
 
-def solve(solution_method_1, solution_method_2):
-    assert test_calculate()
+def test_calculate(calculate_method, test_cases):
+    return all(calculate_method(expression) == test_cases[expression] for expression in test_cases)
+
+def results(solution_method_1, solution_method_2):
+    assert test_calculate(solution_method_1, SILVER_TESTS)
     start_time = time.time()
-    print('Part 1: %s%d%s' % (ANSI_SILVER, solution_method_1(SOLUTION_INPUT), ANSI_NC))
+    print('Part 1: %s%d%s' % (ANSI_SILVER, solve(solution_method_1, SOLUTION_INPUT), ANSI_NC))
     print('Solved in %s seconds' % (time.time() - start_time))
+    #assert test_calculate(solution_method_2, GOLD_TESTS)
     #start_time = time.time()
-    #print('Part 2: %s%d%s' % (ANSI_GOLD, solution_method_2(SOLUTION_INPUT), ANSI_NC))
+    #print('Part 2: %s%d%s' % (ANSI_GOLD, solve(solution_method_2, SOLUTION_INPUT), ANSI_NC))
     #print('Solved in %s seconds' % (time.time() - start_time))
 
-solve(silver, None)
+results(calculate_silver, calculate_gold)
