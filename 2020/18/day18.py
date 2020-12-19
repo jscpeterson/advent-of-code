@@ -1,6 +1,5 @@
 import time
 
-TEST_DATA = 'test'
 SOLUTION_INPUT = 'input'
 ANSI_SILVER = '\033[1;37m'
 ANSI_GOLD = '\033[1;33m'
@@ -55,7 +54,6 @@ def calculate_gold(expression=None, tokens=None):
         tokens = [token for token in expression]
     operands = list()
     operators = list()
-    priority_level = 0
     while tokens:
         token = tokens.pop(0)
         if token in DIGITS:
@@ -66,7 +64,6 @@ def calculate_gold(expression=None, tokens=None):
             operands.append(calculate_gold(tokens=tokens))
         elif token in ')':
             break
-        priority_level += 1
     priority_level = 0
     while operators:
         if OPERATORS[priority_level] not in operators:
