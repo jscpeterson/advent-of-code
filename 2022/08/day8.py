@@ -1,4 +1,5 @@
 import sys
+from numpy import prod as product
 
 filename = sys.argv[1]
 
@@ -43,29 +44,36 @@ for y, row in enumerate(data):
 def is_visibility_blocked(grid, point, max_x, max_y): 
     height_at_point = grid[point]
     directions_blocked = dict()
+    scenic_score = 1
     for direction in CARDINAL_DIRECTIONS:
+        visible_trees = 0
         directions_blocked[direction] = False
         next_point = (point[0] + direction[0], point[1] + direction[1])
         while point_in_grid(next_point, max_x, max_y):
             height_at_tree_in_direction = grid[next_point]
             visibility_is_blocked = height_at_tree_in_direction >= height_at_point
+            visible_trees += 1
             if visibility_is_blocked:
                 print(f"Point {point} with height {height_at_point} BLOCKED by {next_point} with height {height_at_tree_in_direction}")
                 directions_blocked[direction] = True
                 break
-            next_point = (next_point[0] + direction[0], next_point[1] + direction[1])    
-    return all(directions_blocked[key] for key in directions_blocked.keys())
+            next_point = (next_point[0] + direction[0], next_point[1] + direction[1])
+        scenic_score *= visible_trees
+    return all(directions_blocked[key] for key in directions_blocked.keys()), scenic_score
 
 visible_points = []
+scenic_scores = []
 for point in grid:
     neighboring_trees = all_neighbors[point]
-    is_tree_on_edge = len(neighboring_trees) < len(CARDINAL_DIRECTIONS)
+    tree_on_edge = len(neighboring_trees) < len(CARDINAL_DIRECTIONS)
 #    is_visible_tree = any(grid[neighboring_tree_position] < height_at_point for neighboring_tree_position in all_neighbors[point])
 #    if is_tree_on_edge or is_visible_tree:
 #        visible_points.append(point)     
 
-    if is_tree_on_edge or not is_visibility_blocked(grid, point, max_x, max_y):
+    visibility_blocked, scenic_score = is_visibility_blocked(grid, point, max_x, max_y)
+    if tree_on_edge or not visibility_blocked:
         visible_points.append(point)
+    scenic_scores.append(scenic_score)
 
 def print_grid(grid, max_x, max_y):
     for y in range(0, max_y):
@@ -80,3 +88,4 @@ def print_grid(grid, max_x, max_y):
 print_grid(grid, max_x, max_y)
 
 print(len(visible_points))
+print(f"Part 2: {max(scenic_scores)}")
