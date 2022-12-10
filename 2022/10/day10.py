@@ -1,11 +1,9 @@
 import sys
 
-CYCLES_TO_CHECK = [20, 60, 100, 140, 180, 220]
-LIT_PIXEL = "#"
-DARK_PIXEL = "."
-
 class CPU:
-   display_width = 0
+   display_width = 0 
+   pixel_lit = "#"
+   pixel_dark = "."
    cycles = 0
    x = 1
    signal_strength = 0
@@ -33,7 +31,7 @@ class CPU:
 
        # Display pixel based on current x register
        sprite_in_x_register = (self.x-1, self.x, self.x+1)
-       sys.stdout.write(LIT_PIXEL) if pixel_being_drawn in sprite_in_x_register else sys.stdout.write(DARK_PIXEL)
+       sys.stdout.write(self.pixel_lit) if pixel_being_drawn in sprite_in_x_register else sys.stdout.write(self.pixel_dark)
 
    def run(self, program_instructions):
        for instruction in program_instructions:
