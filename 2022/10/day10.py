@@ -2,8 +2,8 @@ import sys
 
 class CPU:
    display_width = 0 
-   pixel_lit = "#"
-   pixel_dark = "."
+   pixel_lit = "\u2588"
+   pixel_dark = " "
    cycles = 0
    x = 1
    signal_strength = 0
